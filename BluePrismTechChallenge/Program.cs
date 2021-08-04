@@ -23,20 +23,20 @@ namespace BluePrismTechChallenge
                         IWordsDB wordsDB = new FileWordsDB(opts.WordsDictionaryFilePath, opts.ResultsFilePath);
 
                         var wp = new WordPuzzleEngine(searchStrategy, wordsDB);
-                        var result = await wp.FindWordsAsync(opts.StartWord, opts.EndWord);
+                        var result = await wp.FindWordsAsync(opts.StartWord, opts.EndWord, wordLength: 4);
 
                         if (result.Any())
                         {
                             foreach (var item in result)
                             {
-                                Console.WriteLine($"Words: {result}");
+                                Console.WriteLine($"Words: {item}");
                             }
                         }
                         else
                         {
                             Console.WriteLine($"No words were found.");
                         }
-                       
+
 
                     }).ConfigureAwait(false);
 

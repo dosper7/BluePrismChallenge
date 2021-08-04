@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BluePrismTechChallenge\BluePrismTechChallenge.csproj" />
+    <ProjectReference Include="..\BluePrismTechChallenge\WordPuzzle.csproj" />
   </ItemGroup>
 
   <ItemGroup>

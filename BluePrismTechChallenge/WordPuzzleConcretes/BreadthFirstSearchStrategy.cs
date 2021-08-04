@@ -35,44 +35,45 @@ namespace BluePrismTechChallenge.WordPuzzleConcretes
 
             startWord = startWord.ToLower();
             stopWord = stopWord.ToLower();
-            var visited = new List<string>();
-            var queue = new Queue<string>();
-            var wordParents = new Dictionary<string, string>();
+            var visitedNodes = new List<string>();
+            var nodesToCheck = new Queue<string>();
+            var nodeParents = new Dictionary<string, string>();
 
             BuildGraphNodes(wordsList, startWord.Length);
 
-            queue.Enqueue(startWord);
-            visited.Add(startWord);
+            nodesToCheck.Enqueue(startWord);
+            visitedNodes.Add(startWord);
 
-            while (queue.Any())
+            while (nodesToCheck.Any())
             {
-                string wordToCheck = queue.Dequeue();
+                string wordToCheck = nodesToCheck.Dequeue();
                 IEnumerable<string> neighbours = GetNodeNeighbours(wordToCheck);
 
                 foreach (var neighbour in neighbours)
                 {
-                    if (!visited.Any(v => string.Compare(v, neighbour, StringComparison.InvariantCultureIgnoreCase) == 0))
+                    bool nodeNotVisited = !visitedNodes.Any(v => string.Compare(v, neighbour, StringComparison.InvariantCultureIgnoreCase) == 0);
+                    if (nodeNotVisited)
                     {
-                        queue.Enqueue(neighbour);
-                        visited.Add(neighbour);
-                        wordParents.Add(neighbour, wordToCheck);
+                        nodesToCheck.Enqueue(neighbour);
+                        visitedNodes.Add(neighbour);
+                        nodeParents.Add(neighbour, wordToCheck);
                     }
                 }
             }
 
-            var shortestPath = new List<string>();
-            string pathItem = stopWord;
-            while (pathItem != null)
+            var shortestList = new List<string>();
+            string nodeWord = stopWord;
+            while (nodeWord != null)
             {
-                shortestPath.Add(pathItem);
-                pathItem = wordParents.ContainsKey(pathItem) ? wordParents[pathItem] : null;
+                shortestList.Add(nodeWord);
+                nodeWord = nodeParents.ContainsKey(nodeWord) ? nodeParents[nodeWord] : null;
             }
 
-            shortestPath.Reverse();
+            shortestList.Reverse();
 
             return 
-                shortestPath[0] == startWord ? 
-                shortestPath : 
+                shortestList[0] == startWord ? 
+                shortestList : 
                 Enumerable.Empty<string>();
         }
 

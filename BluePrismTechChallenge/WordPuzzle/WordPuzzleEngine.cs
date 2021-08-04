@@ -21,11 +21,11 @@ namespace BluePrismTechChallenge.WordPuzzle
             return this;
         }
 
-        public async Task<IEnumerable<string>> FindWordsAsync(string startWord, string endWord)
+        public async Task<IEnumerable<string>> FindWordsAsync(string startWord, string endWord, int? wordLength = null)
         {
-            var listOfWords = await wordsDB.GetWords();
+            var listOfWords = await wordsDB.GetWordsAsync(wordLength);
             var wordsResult = SearchStrategy.SearchWords(listOfWords, startWord, endWord);
-            await wordsDB.SaveWords(wordsResult);
+            await wordsDB.SaveWordsAsync(wordsResult);
             return wordsResult;
         }
     }

@@ -5,7 +5,7 @@ namespace BluePrismTechChallenge.WordPuzzle
 {
     public interface IWordsDB
     {
-        Task<IEnumerable<string>> GetWords();
-        Task SaveWords(IEnumerable<string> words);
+        Task<IEnumerable<string>> GetWordsAsync(int? wordLength = null);
+        Task SaveWordsAsync(IEnumerable<string> words);
     }
 }
