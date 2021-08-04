@@ -22,11 +22,10 @@ namespace UnitTests
         }
 
         [TestMethod]
-
-        public async Task FindWords_shouldReturn_listOfWords()
+        [DataRow(new[] { "a", "b", "c" })]
+        public async Task FindWords_shouldReturn_listOfWords(string[] expectedList)
         {
             //arrange
-            var expectedList = new[] { "a", "b", "c" };
             _wordsDB.Setup(m => m.GetWords()).ReturnsAsync(Enumerable.Empty<string>());
             _searchStrategy.Setup(m => m.SearchWords(It.IsAny<IEnumerable<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(expectedList);
 
@@ -36,6 +35,31 @@ namespace UnitTests
             //assert
             CollectionAssert.AreEqual(result.ToList(), expectedList);
 
+        }
+
+        [TestMethod]
+        [DataRow(new[] { "a", "b", "c" })]
+        public void FindWords_should_change_strategy(string[] expectedList)
+        {
+            //arrange
+            _wordsDB.Setup(m => m.GetWords()).ReturnsAsync(Enumerable.Empty<string>());
+            _searchStrategy.Setup(m => m.SearchWords(It.IsAny<IEnumerable<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(expectedList);
+            var newSearchStrategy = new Mock<ISearchStrategy>();
+
+            //act
+             _wordPuzzleEngine.ChangeStrategy(new MockStrategy());
+
+            //assert
+            Assert.IsInstanceOfType(_wordPuzzleEngine.SearchStrategy, typeof(MockStrategy));
+
+        }
+
+        private class MockStrategy : ISearchStrategy
+        {
+            public IEnumerable<string> SearchWords(IEnumerable<string> wordsList, string startWord, string endWord)
+            {
+                throw new System.NotImplementedException();
+            }
         }
     }
 }

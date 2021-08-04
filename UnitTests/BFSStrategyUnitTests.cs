@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace UnitTests
 {
@@ -23,18 +22,42 @@ namespace UnitTests
         }
 
         [TestMethod]
+        [DataRow("Same", "Cost", new[] { "same", "came", "case", "cast", "cost" })]
+        [DataRow("SAME", "Cost", new[] { "same", "came", "case", "cast", "cost" })]
         [DataRow("same", "cost", new[] { "same", "came", "case", "cast", "cost" })]
-        public void GetShortestPath(string startWord, string endWord, string[] expected)
+        public void SearchWords_should_return_valid_shortestPath(string startWord, string endWord, string[] expected)
         {
             //arrange
             var words = wordsList.Value;
-
             //act
             var result = searchStrategy.SearchWords(words, startWord, endWord);
-
             //assert
             CollectionAssert.AreEqual(result.ToList(), expected);
 
+        }
+
+        [TestMethod]
+        [DataRow("", "1", new[] { "1" })]
+        [DataRow(null, "1", new[] { "1" })]
+        [DataRow("1", "", new[] { "1" })]
+        [DataRow("", null, new string[] { })]
+        [DataRow("1", "1", null)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SearchWords_when_AnyParameterIsNull_should_throwExcepton(string startWord, string endWord, string[] wordsList)
+        {
+            //act
+            searchStrategy.SearchWords(wordsList, startWord, endWord);
+
+        }
+
+        [TestMethod]
+        [DataRow("1", "11", new[] { "1" })]
+        [DataRow("11", "1", new[] { "1" })]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SearchWords_when_startWord_And_StopWord_NotTheSameLenght_shouldThrowExcepton(string startWord, string endWord, string[] wordsList)
+        {
+            //act
+            searchStrategy.SearchWords(wordsList, startWord, endWord);
         }
 
 

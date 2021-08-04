@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "<Pending>", Scope = "member", Target = "~M:UnitTests.WordPuzzleEngineUnitTests.FindWords_shouldReturn_listOfWords~System.Threading.Tasks.Task")]
+[assembly: SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "<Pending>", Scope = "member", Target = "~M:UnitTests.WordPuzzleEngineUnitTests.FindWords_shouldReturn_listOfWords(System.String[])~System.Threading.Tasks.Task")]

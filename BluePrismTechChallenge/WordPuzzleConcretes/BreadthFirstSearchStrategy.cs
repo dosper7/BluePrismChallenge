@@ -12,23 +12,42 @@ namespace BluePrismTechChallenge.WordPuzzleConcretes
     /// </summary>
     public class BreadthFirstSearchStrategy : ISearchStrategy
     {
+        private ConcurrentDictionary<string, IEnumerable<string>> _graphNodes = null;
+
+        public BreadthFirstSearchStrategy()
+        {
+            _graphNodes = new ConcurrentDictionary<string, IEnumerable<string>>();
+        }
+
         public IEnumerable<string> SearchWords(IEnumerable<string> wordsList, string startWord, string stopWord)
         {
+            if (wordsList is null)
+                throw new ArgumentNullException(nameof(wordsList));
+
+            if (string.IsNullOrEmpty(startWord))
+                throw new ArgumentNullException($"'{nameof(startWord)}' cannot be null or empty.", nameof(startWord));
+
+            if (string.IsNullOrEmpty(stopWord))
+                throw new ArgumentNullException($"'{nameof(stopWord)}' cannot be null or empty.", nameof(stopWord));
+
             if (startWord.Length != stopWord.Length)
                 throw new ArgumentException("Start Word and Stop word dont have the same lenght.");
 
-            var graph = Graph.Build(wordsList, startWord.Length);
+            startWord = startWord.ToLower();
+            stopWord = stopWord.ToLower();
             var visited = new List<string>();
             var queue = new Queue<string>();
             var wordParents = new Dictionary<string, string>();
 
+            BuildGraphNodes(wordsList, startWord.Length);
+
             queue.Enqueue(startWord);
             visited.Add(startWord);
 
-            while (queue.Count > 0)
+            while (queue.Any())
             {
                 string wordToCheck = queue.Dequeue();
-                IEnumerable<string> neighbours = graph.GetNeighbours(wordToCheck);
+                IEnumerable<string> neighbours = GetNodeNeighbours(wordToCheck);
 
                 foreach (var neighbour in neighbours)
                 {
@@ -51,47 +70,40 @@ namespace BluePrismTechChallenge.WordPuzzleConcretes
 
             shortestPath.Reverse();
 
-            return shortestPath[0] == startWord ?
-                shortestPath :
+            return 
+                shortestPath[0] == startWord ? 
+                shortestPath : 
                 Enumerable.Empty<string>();
         }
 
-        private class Graph
+        public IEnumerable<string> GetNodeNeighbours(string word) => _graphNodes[word];
+
+        private void BuildGraphNodes(IEnumerable<string> wordsList, int wordLength)
         {
-            private ConcurrentDictionary<string, IEnumerable<string>> _nodes = new ConcurrentDictionary<string, IEnumerable<string>>();
+            if (wordsList is null)
+                throw new ArgumentNullException(nameof(wordsList));
 
-            public IEnumerable<string> GetNeighbours(string word) => _nodes[word];
-
-            public static Graph Build(IEnumerable<string> wordsList, int wordLength)
+            var sameLengthWords = wordsList.Where(x => x.Length == wordLength);
+            Parallel.ForEach(sameLengthWords, word =>
             {
-                if (wordsList is null)
-                    throw new ArgumentNullException(nameof(wordsList));
+                var edges = wordsList.Where(w => DifferInOneLetter(word, w));
+                _graphNodes.TryAdd(word, edges);
+            });
+        }
 
-                var graph = new Graph();
-                var sameLengthWords = wordsList.Where(x => x.Length == wordLength);
-                Parallel.ForEach(sameLengthWords, word =>
-                {
-                    var edges = wordsList.Where(w => DifferInOneLetter(word, w));
-                    graph._nodes.TryAdd(word, edges);
-                });
-
-                return graph;
-            }
-
-            private static bool DifferInOneLetter(ReadOnlySpan<char> firstWord, ReadOnlySpan<char> secondWord)
+        private static bool DifferInOneLetter(string firstWord, string secondWord)
+        {
+            int count = 0;
+            if (firstWord.Length == secondWord.Length)
             {
-                int count = 0;
-                if (firstWord.Length == secondWord.Length)
+                for (int i = 0; i < firstWord.Length; i++)
                 {
-                    for (int i = 0; i < firstWord.Length; i++)
-                    {
-                        if (firstWord[i] != secondWord[i] && ++count > 1)
-                            return false;
-                    }
+                    if (firstWord[i] != secondWord[i] && ++count > 1)
+                        return false;
                 }
-                return count == 1;
-
             }
+            return count == 1;
+
         }
 
     }
