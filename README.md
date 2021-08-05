@@ -11,7 +11,7 @@ The method GetWordsAsync a BufferedStream that helps with performance and memory
 Also it has the added benefit that in the rere case that the amount of words to read are bigger than Int.MaxValue, if I used File.ReadAllLines that returns an array it avoids the memory overflow exception.
 The method SaveWordsAsync uses a StreamWriter to write to file, I could instead use File.WriteAllText because the amount of data to write is small (at least during my tests) but with the StreamWrite gives more control on how to write to disk (by setting up the buffer size, for instance, can increase performance for big files).
 
-BreadthFirstSearchStrategy (IWordsDB ISearchStrategy)
+BreadthFirstSearchStrategy (ISearchStrategy implementation)
 ---
 
 References
