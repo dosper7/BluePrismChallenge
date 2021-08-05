@@ -1,9 +1,9 @@
 BluePrismChallenge
 ===
 For this challenge I created 3 main files
->- WordPuzzleEngine.cs - class that works with two interfaces (ISearchStrategy and IWordsDB).
->- IWordsDB.cs - Interface that defines the type of database the WordPuzzleEngine will use to get and save the words.
->- ISearchStrategy.cs - Interface that defines the type of search to be done by the WordPuzzleEngine.
+- WordPuzzleEngine.cs - class that works with two interfaces (ISearchStrategy and IWordsDB).
+- IWordsDB.cs - Interface that defines the type of database the WordPuzzleEngine will use to get and save the words.
+- ISearchStrategy.cs - Interface that defines the type of search to be done by the WordPuzzleEngine.
 
 FileWordsDB (IWordsDB implementation)
 ---
