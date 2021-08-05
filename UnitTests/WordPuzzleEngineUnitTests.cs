@@ -26,11 +26,11 @@ namespace UnitTests
         public async Task FindWords_shouldReturn_listOfWords(string[] expectedList)
         {
             //arrange
-            _wordsDB.Setup(m => m.GetWordsAsync(null)).ReturnsAsync(Enumerable.Empty<string>());
+            _wordsDB.Setup(m => m.GetWords(null)).Returns(Enumerable.Empty<string>());
             _searchStrategy.Setup(m => m.SearchWords(It.IsAny<IEnumerable<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(expectedList);
 
             //act
-            var result = await _wordPuzzleEngine.FindWordsAsync(string.Empty, string.Empty);
+            var result = await _wordPuzzleEngine.FindWordsAsync("1", "1");
 
             //assert
             CollectionAssert.AreEqual(result.ToList(), expectedList);
@@ -42,7 +42,7 @@ namespace UnitTests
         public void FindWords_should_change_strategy(string[] expectedList)
         {
             //arrange
-            _wordsDB.Setup(m => m.GetWordsAsync(null)).ReturnsAsync(Enumerable.Empty<string>());
+            _wordsDB.Setup(m => m.GetWords(null)).Returns(Enumerable.Empty<string>());
             _searchStrategy.Setup(m => m.SearchWords(It.IsAny<IEnumerable<string>>(), It.IsAny<string>(), It.IsAny<string>())).Returns(expectedList);
             var newSearchStrategy = new Mock<ISearchStrategy>();
 

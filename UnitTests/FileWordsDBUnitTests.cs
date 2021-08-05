@@ -24,21 +24,21 @@ namespace UnitTests
 
         [TestMethod]
         [ExpectedException(typeof(FileNotFoundException))]
-        public async Task GetWords_whenSourceFileDoesntExist_shouldThrowException()
+        public void GetWords_whenSourceFileDoesntExist_shouldThrowException()
         {
             //arrange
             var wordsDB = new FileWordsDB("1", resultFile);
             //act
-            await wordsDB.GetWordsAsync();
+            wordsDB.GetWords();
         }
 
         [TestMethod]
-        public async Task GetWords_should_read_all_file_entries()
+        public void GetWords_should_read_all_file_entries()
         {
             //arrange
             int totalWords = 26880;
             //act
-            var words = await _wordsDB.GetWordsAsync();
+            var words =  _wordsDB.GetWords();
             //assert
             Assert.AreEqual(words.Count(), totalWords);
         }
@@ -47,10 +47,10 @@ namespace UnitTests
         [DataRow(2)]
         [DataRow(4)]
         [DataRow(6)]
-        public async Task GetWords_ShouldOnlyReturnWords_WhenLenghtIsSet(int wordLength)
+        public void GetWords_ShouldOnlyReturnWords_WhenLenghtIsSet(int wordLength)
         {
             //act
-            var words = await _wordsDB.GetWordsAsync(wordLength);
+            var words = _wordsDB.GetWords();
             //assert
             Assert.IsTrue(words.All(x => x.Length == wordLength));
 
@@ -66,7 +66,7 @@ namespace UnitTests
 
             //act
             await wordsDB.SaveWordsAsync(words);
-            var fileWords = await wordsDB.GetWordsAsync();
+            var fileWords = wordsDB.GetWords();
 
             //assert
             CollectionAssert.AreEqual(words, fileWords.ToArray());

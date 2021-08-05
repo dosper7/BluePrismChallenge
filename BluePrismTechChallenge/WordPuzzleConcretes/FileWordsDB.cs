@@ -17,20 +17,20 @@ namespace BluePrismTechChallenge.WordPuzzleConcretes
             ResultFilePath = resultFilePath ?? throw new System.ArgumentNullException(nameof(resultFilePath));
         }
 
-        public async Task<IEnumerable<string>> GetWordsAsync(int? wordLength = null)
+        public IEnumerable<string> GetWords(int? wordLength = null)
         {
             var words = new List<string>();
             using (var fs = File.Open(SourceFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var bs = new BufferedStream(fs))
             using (var reader = new StreamReader(bs))
             {
-                string word = await reader.ReadLineAsync().ConfigureAwait(false);
+                string word = reader.ReadLine();
                 while (!string.IsNullOrWhiteSpace(word))
                 {
                     if (wordLength is null || word.Length == wordLength)
                         words.Add(word);
 
-                    word = await reader.ReadLineAsync().ConfigureAwait(false);
+                    word = reader.ReadLine();
                 }
             }
 

@@ -23,7 +23,13 @@ namespace BluePrismTechChallenge.WordPuzzle
 
         public async Task<IEnumerable<string>> FindWordsAsync(string startWord, string endWord, int? wordLength = null)
         {
-            var listOfWords = await wordsDB.GetWordsAsync(wordLength);
+            if (string.IsNullOrWhiteSpace(startWord))
+                throw new ArgumentException($"'{nameof(startWord)}' cannot be null or whitespace.", nameof(startWord));
+            
+            if (string.IsNullOrWhiteSpace(endWord))
+                throw new ArgumentException($"'{nameof(endWord)}' cannot be null or whitespace.", nameof(endWord));
+            
+            var listOfWords = wordsDB.GetWords(wordLength);
             var wordsResult = SearchStrategy.SearchWords(listOfWords, startWord, endWord);
             await wordsDB.SaveWordsAsync(wordsResult);
             return wordsResult;
