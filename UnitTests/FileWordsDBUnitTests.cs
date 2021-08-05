@@ -50,7 +50,7 @@ namespace UnitTests
         public void GetWords_ShouldOnlyReturnWords_WhenLenghtIsSet(int wordLength)
         {
             //act
-            var words = _wordsDB.GetWords();
+            var words = _wordsDB.GetWords(wordLength);
             //assert
             Assert.IsTrue(words.All(x => x.Length == wordLength));
 
