@@ -1,4 +1,4 @@
-BluePrismChallenge
+WordPuzzle
 ===
 For this challenge I created 3 main files
 - WordPuzzleEngine.cs - class that works with two interfaces (ISearchStrategy and IWordsDB).
