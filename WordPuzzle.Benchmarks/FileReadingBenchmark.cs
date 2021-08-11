@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace WordPuzzle.Benchmarks
 {
     [MemoryDiagnoser]
-    //[NativeMemoryProfiler]
     public class FileReadingBenchmark
     {
         private static readonly string wordsFile = $"{AppContext.BaseDirectory}words-english.txt";
@@ -18,8 +17,8 @@ namespace WordPuzzle.Benchmarks
         public async Task<List<string>> ReadLinesBufferedAsync()
         {
             using var stream = File.Open(wordsFile, FileMode.Open, FileAccess.Read);
-            using var bs = new BufferedStream(stream,int.MaxValue);
-            using var reader = new StreamReader(stream);
+            using var bs = new BufferedStream(stream);
+            using var reader = new StreamReader(bs);
 
             var words = new List<string>();
             string word = await reader.ReadLineAsync().ConfigureAwait(false);
@@ -37,7 +36,7 @@ namespace WordPuzzle.Benchmarks
         {
             using var stream = File.Open(wordsFile, FileMode.Open, FileAccess.Read);
             using var bs = new BufferedStream(stream);
-            using var reader = new StreamReader(stream);
+            using var reader = new StreamReader(bs);
 
             var words = new List<string>();
             string word = reader.ReadLine();
@@ -54,7 +53,7 @@ namespace WordPuzzle.Benchmarks
         {
             using var stream = File.Open(wordsFile, FileMode.Open, FileAccess.Read);
             using var bs = new BufferedStream(stream, 65536);
-            using var reader = new StreamReader(stream);
+            using var reader = new StreamReader(bs);
 
             var words = new List<string>();
             string word = reader.ReadLine();
@@ -67,22 +66,29 @@ namespace WordPuzzle.Benchmarks
         }
 
         [Benchmark]
-        public List<string> ReadLines()
+        public string[] ReadLines()
         {
-            return File.ReadLines(wordsFile).ToList();
+            return File.ReadLines(wordsFile).ToArray();
         }
 
         [Benchmark]
-        public string ReadAllText()
+        public List<string> ReadAllTextWithSpan()
         {
-            return File.ReadAllText(wordsFile);
+            var listOfWords = new List<string>();
+            ReadOnlySpan<char> words = File.ReadAllText($"{AppContext.BaseDirectory}words-english.txt");
+
+            int newLineIndex = words.IndexOf(Environment.NewLine);
+            int startIndex = 0;
+            while (newLineIndex != -1)
+            {
+                var word = words.Slice(startIndex, newLineIndex);
+                startIndex += newLineIndex + Environment.NewLine.Length;
+                listOfWords.Add(new string(word));
+                newLineIndex = words.Slice(startIndex).IndexOf(Environment.NewLine);
+            }
+            return listOfWords;
         }
 
-        [Benchmark]
-        public byte[] ReadAllBytes()
-        {
-            return File.ReadAllBytes(wordsFile);
-        }
 
         [Benchmark]
         public string[] ReadAllLines()

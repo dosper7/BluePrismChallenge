@@ -1,5 +1,7 @@
 ﻿using BenchmarkDotNet.Running;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace WordPuzzle.Benchmarks
 {
@@ -11,5 +13,6 @@ namespace WordPuzzle.Benchmarks
             Console.WriteLine(summary.ToString());
             Console.ReadLine();
         }
+
     }
 }
