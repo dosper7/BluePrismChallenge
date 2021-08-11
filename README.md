@@ -9,18 +9,19 @@ FileWordsDB (IWordsDB implementation)
 ---
 The method GetWords a BufferedStream that helps with performance and memory allocations in case of big files.
 
-At first i've set the method as async but after running some benchmarks (project inside the solution) I noticed that the sync method was faster and allocates less memory.
+At first i've set the method as async but after running some benchmarks (project inside the solution) I noticed that the sync method (with a buffer of size 64k) was faster and allocates less memory.
+
+The 64k magic buffer sized is based on a report called "Sequential File Programming Patterns and Performance with .NET" done by microsoft reasearch (last link in the references sections)
 
 ```
-|                            Method |       Mean |     Error |    StdDev |    Gen 0 |    Gen 1 |    Gen 2 | Allocated |
-|---------------------------------- |-----------:|----------:|----------:|---------:|---------:|---------:|----------:|
-|            ReadLinesBufferedAsync | 7,111.3 μs | 141.98 μs | 241.09 μs | 562.5000 | 257.8125 | 125.0000 |  3,575 KB |
-|             ReadLinesBufferedSync | 1,936.4 μs |  31.77 μs |  32.62 μs | 246.0938 | 121.0938 | 121.0938 |  1,603 KB |
-| ReadLinesBufferedSyncBiggerBuffer | 1,971.3 μs |  28.02 μs |  29.99 μs | 246.0938 | 121.0938 | 121.0938 |  1,603 KB |
-|                         ReadLines | 2,068.0 μs |  40.83 μs |  62.35 μs | 246.0938 | 121.0938 | 121.0938 |  1,603 KB |
-|                       ReadAllText |   479.2 μs |   9.51 μs |  12.70 μs | 142.5781 | 142.5781 | 142.5781 |    997 KB |
-|                      ReadAllBytes |   193.9 μs |   3.87 μs |   6.77 μs |  76.9043 |  76.9043 |  76.9043 |    244 KB |
-|                      ReadAllLines | 1,984.5 μs |  16.50 μs |  13.78 μs | 277.3438 | 183.5938 | 183.5938 |  1,813 KB |
+|                            Method |     Mean |     Error |    StdDev |    Gen 0 |    Gen 1 |    Gen 2 | Allocated |
+|---------------------------------- |---------:|----------:|----------:|---------:|---------:|---------:|----------:|
+|            ReadLinesBufferedAsync | 6.571 ms | 0.0955 ms | 0.0846 ms | 562.5000 | 242.1875 | 117.1875 |      3 MB |
+|             ReadLinesBufferedSync | 1.954 ms | 0.0176 ms | 0.0156 ms | 246.0938 | 121.0938 | 121.0938 |      2 MB |
+| ReadLinesBufferedSyncBiggerBuffer | 1.868 ms | 0.0120 ms | 0.0094 ms | 248.0469 | 123.0469 | 123.0469 |      2 MB |
+|                         ReadLines | 2.064 ms | 0.0334 ms | 0.0312 ms | 214.8438 | 109.3750 | 101.5625 |      2 MB |
+|               ReadAllTextWithSpan | 2.921 ms | 0.0492 ms | 0.0585 ms | 503.9063 | 449.2188 | 250.0000 |      2 MB |
+|                      ReadAllLines | 2.042 ms | 0.0343 ms | 0.0534 ms | 277.3438 | 183.5938 | 183.5938 |      2 MB |
 ```
 
 Also it has the added benefit that in the rere case that the amount of words to read are bigger than Int.MaxValue, if I used File.ReadAllLines that returns an array it avoids the memory overflow exception.
@@ -57,6 +58,8 @@ https://www.letscodethemup.com/graph-search-breadth-first-search/
 https://medium.com/better-programming/5-ways-to-find-the-shortest-path-in-a-graph-88cfefd0030f
 
 https://hellokoding.com/shortest-paths/
+
+https://arxiv.org/pdf/cs/0502012
 
 
 How to use the console UI
