@@ -21,7 +21,7 @@ namespace BluePrismTechChallenge.WordPuzzleConcretes
         {
             var words = new List<string>();
             using (var fs = File.Open(SourceFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (var bs = new BufferedStream(fs))
+            using (var bs = new BufferedStream(fs, 65536))
             using (var reader = new StreamReader(bs))
             {
                 string word = reader.ReadLine();
